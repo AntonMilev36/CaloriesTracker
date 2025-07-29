@@ -1,0 +1,33 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="{% static 'register.css' %}">
+	<title>Login</title>
+</head>
+<body>
+	<div class="register-box">
+		<h1>Login</h1>
+		<div class="register-form">
+			<form method="post">
+				{% csrf_token %}
+                <div class="form-items">
+                    {{ form.username.label_tag }}
+                    {{ form.username }}
+                    {{ form.username.errors }}
+                </div>
+                <div class="form-items">
+                    {{ form.password.label_tag }}
+                    {{ form.password }}
+                    {{ form.password.errors }}
+                </div>
+				<button>Submit</button>
+			</form>
+		</div>
+		<a href="#">Don't have account, register</a>
+	</div>
+</body>
+</html>

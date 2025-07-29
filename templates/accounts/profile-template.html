@@ -1,0 +1,73 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="{% static 'register.css' %}">
+	<title>Profile</title>
+</head>
+<body>
+	<div class="register-box">
+		<h1>Profile</h1>
+		<div class="register-form">
+			<form method="post">
+                {% csrf_token %}
+                <div class="form-items">
+                    {{ form.first_name.label_tag }}
+                    {{ form.first_name }}
+                    {{ form.first_name.errors }}
+                </div>
+                <div class="form-items">
+                    {{ form.last_name.label_tag }}
+                    {{ form.last_name }}
+                    {{ form.last_name.errors }}
+                </div>
+                <div class="form-items">
+                    {{ form.age.label_tag }}
+                    {{ form.age }}
+                    {{ form.age.errors }}
+                </div>
+                <div class="form-items">
+                    {{ form.gender.label_tag }}
+                    {{ form.gender }}
+                    {{ form.gender.errors }}
+                </div>
+
+{#				<div class="form-items">#}
+{#					<label>First name</label>#}
+{#					<input type="text" name="email">#}
+{#				</div>#}
+{#				<div class="form-items">#}
+{#					<label>Last name</label>#}
+{#					<input type="text" name="password">#}
+{#				</div>#}
+{#				<div class="form-items">#}
+{#					<label>Age</label>#}
+{#					<input type="number" name="rep_password">#}
+{#				</div>#}
+{#				<div class="form-items">#}
+{#					<fieldset>#}
+{#						<label class="main-label">Gender</label>#}
+{#						<label class="choice-label">#}
+{#							<input type="radio" name="genre" value="male">#}
+{#							<label>Male</label>#}
+{#						</label>#}
+{#						<label class="choice-label">#}
+{#							<input type="radio" name="genre" value="female">#}
+{#							<label>Female</label>#}
+{#						</label>#}
+{#						<label class="choice-label">#}
+{#							<input type="radio" name="genre" value="other">#}
+{#							<label>Other</label>#}
+{#						</label>#}
+{#					</fieldset>#}
+{#				</div>#}
+
+				<button>Submit</button>
+			</form>
+		</div>
+	</div>
+</body>
+</html>

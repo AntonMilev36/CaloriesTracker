@@ -1,0 +1,53 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="{% static 'register.css' %}">
+	<title>Register</title>
+</head>
+<body>
+	<div class="register-box">
+		<h1>Register</h1>
+		<div class="register-form">
+			<form method="post">
+                {% csrf_token %}
+                <div class="form-items">
+                    {{ form.email.label_tag }}
+                    {{ form.email }}
+                    {{ form.email.errors }}
+                </div>
+                <div class="form-items">
+                    {{ form.password1.label_tag }}
+                    {{ form.password1 }}
+                    {{ form.password1.errors }}
+                </div>
+                <div class="form-items">
+                    {{ form.password2.label_tag }}
+                    {{ form.password2 }}
+                    {{ form.password2.errors }}
+                </div>
+
+
+
+{#				<div class="form-items">#}
+{#					<label>Email</label>#}
+{#					<input type="email" name="email">#}
+{#				</div>#}
+{#				<div class="form-items">#}
+{#					<label>Password</label>#}
+{#					<input type="password" name="password">#}
+{#				</div>#}
+{#				<div class="form-items">#}
+{#					<label>Repeat password</label>#}
+{#					<input type="password" name="rep_password">#}
+{#				</div>#}
+				<button>Submit</button>
+			</form>
+		</div>
+		<a href="#">Have account, login</a>
+	</div>
+</body>
+</html>

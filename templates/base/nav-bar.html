@@ -1,0 +1,42 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{% static 'nav-bar.css' %}">
+    <title>MyCalPal</title>
+</head>
+<body>
+    <header class="nav-box">
+		<img src="{% static 'images/logo.png' %}" alt="logo">
+		<ul>
+            {% if request.user.is_authenticated %}
+			<li><a href="{% url 'dashboard' pk=request.user.pk %}">Dashboard</a></li>
+			<li><a href="{% url 'edit_profile' pk=request.user.pk %}">Profile</a></li>
+                {% if request.user.is_staff %}
+                    <li><a href="{% url 'create-food' %}">Add Food</a></li>
+                {% endif %}
+                <li>
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit">Logout</button>
+                    </form>
+                </li>
+			<!-- These ones show when the user is not authorized -->
+            {% else %}
+                <li><a href="{% url 'register' %}">Register</a></li>
+                <li><a href="{% url 'login' %}">Login</a></li>
+            {% endif %}
+		</ul>
+	</header>
+
+    {% block content %}
+    {% endblock %}
+
+	<footer>
+		<p>MyCalPal®</p>
+		<p>Created by: <span>Anton Milev Ltd.</span></p>
+	</footer>
+</body>
+</html>

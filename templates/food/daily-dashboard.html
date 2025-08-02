@@ -1,0 +1,34 @@
+{% extends 'base/nav-bar.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'dashboard.css' %}">
+
+    <body>
+        <section>
+            <div class="date-box">
+                <p>Calories for the day: {{ daily_cals|default:0 }}</p>
+                <p>{{ date|date:'d M Y' }}</p>
+            </div>
+            {% for label, meal in meal_type.items %}
+                <div class="meal-box">
+                    <div class="info-box">
+                        <h1>{{ label }}</h1>
+                    </div>
+                    <div class="main-box">
+                        <div class="button-box">
+                            <a href="#">Add food</a>
+                            <a href="#">Meal details</a>
+                        </div>
+                        <div class="macros-box">
+                            <p>kcal: {{ meal.meal_cal|default:0 }}g</p>
+                            <p>protein: {{ meal.meal_protein|default:0 }}g</p>
+                            <p>carbs: {{ meal.meal_carbs|default:0 }}g</p>
+                            <p>fats: {{ meal.meal_fats|default:0 }}g</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </section>
+    </body>
+{% endblock %}

@@ -9,6 +9,7 @@ body{
 	background-color: #FC5BB6;
 	width: 40%;
 	align-items: center;
+	margin: 3% 0;
 }
 
 .register-form {
@@ -18,7 +19,7 @@ body{
 	color: #FFF6FB;
 	width: 50%;
 	align-items: center;
-	margin: 10%, 0%;
+	margin: 2% 0;
 }
 
 .register-form form{
@@ -47,16 +48,17 @@ body{
 
 .register-box h1 {
 	color: white;
-	margin: 5% 0%;
+	margin: 5% 0;
 }
 
 .register-box a {
 	color: #FFF6FB;
 	font-size: 1.5em;
 	margin-bottom: 5%;
+	padding: 0;
 }
 
-button {
+.register-box button {
 	display: flex;
 	background-color: #FFBEE3;
 	border-color: #FF0592;
@@ -65,6 +67,7 @@ button {
 	font-size: 1.4rem;
 	padding: 2% 4%;
 	margin-bottom: 5%;
+	cursor: pointer;
 }
 
 
@@ -84,4 +87,5 @@ button {
 
 .main-label {
 	font-size: 1.4rem;
+}
 

@@ -32,7 +32,9 @@ ALLOWED_HOSTS = []
 
 # Application definition
 PROJECT_APPS = [
-    'accounts'
+    'accounts',
+    'foods',
+    'common'
 ]
 
 INSTALLED_APPS = [
@@ -134,5 +136,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.AppUser'
 
-#TODO add a reverse_lazy to login
+
 LOGIN_REDIRECT_URL = reverse_lazy('edit_profile', kwargs={'pk': 8})
+LOGOUT_REDIRECT_URL = reverse_lazy('login')

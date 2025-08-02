@@ -1,0 +1,47 @@
+{% extends 'base/nav-bar.html' %}
+{% load static %}
+
+{% block content %}
+	<link rel="stylesheet" type="text/css" href="{% static 'register.css' %}">
+<body>
+	<div class="register-box">
+		<h1>Add new Food</h1>
+		<div class="register-form">
+			<form method="post">
+				{% csrf_token %}
+                <div class="form-items">
+                    {{ form.name.label }}
+                    {{ form.name }}
+                    {{ form.name.errors }}
+                </div>
+                <div class="form-items">
+                    {{ form.calories.label }}
+                    {{ form.calories }}
+                    {{ form.calories.errors }}
+                </div>
+                <div class="form-items">
+                    {{ form.protein.label }}
+                    {{ form.protein }}
+                    {{ form.protein.errors }}
+                </div>
+                <div class="form-items">
+                    {{ form.carbs.label }}
+                    {{ form.carbs }}
+                    {{ form.carbs.errors }}
+                </div>
+                <div class="form-items">
+                    {{ form.fats.label }}
+                    {{ form.fats }}
+                    {{ form.fats.errors }}
+                </div>
+                <div class="form-items">
+                    {{ form.image.label }}
+                    {{ form.image }}
+                    {{ form.image.errors }}
+                </div>
+				<button>Submit</button>
+			</form>
+		</div>
+	</div>
+</body>
+{% endblock %}

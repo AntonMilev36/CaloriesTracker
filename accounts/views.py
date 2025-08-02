@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.http import HttpResponse
-from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView
 
@@ -33,7 +32,12 @@ class ProfileEditView(LoginRequiredMixin, UpdateView):
     model = Profile
     form_class = ProfileEditForm
     template_name = 'accounts/profile-template.html'
-    success_url = reverse_lazy('')
 
     def get_object(self, queryset=None):
         return self.request.user.profile
+
+    def get_success_url(self):
+        user = self.request.user
+        return reverse_lazy(
+            'dashboard', kwargs={'pk': user.pk}
+        )

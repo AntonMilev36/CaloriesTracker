@@ -1,11 +1,14 @@
 import datetime
 
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, TemplateView
+from django.views.generic import CreateView, TemplateView, ListView
+from rest_framework.filters import SearchFilter
+from rest_framework.generics import ListAPIView
 
 from foods.choices import MealTypeChoices
 from foods.forms import FoodCreateForm
 from foods.models import Food, Meal
+from foods.serializers import FoodSearchSerializer
 
 
 # Create your views here.
@@ -19,6 +22,19 @@ class FoodCreateView(CreateView):
         return reverse_lazy(
             'dashboard', kwargs={'pk': user.pk}
         )
+
+
+class FoodsListAPIView(ListAPIView):
+    queryset = Food.objects.all()
+    serializer_class = FoodSearchSerializer
+    filter_backends = [SearchFilter]
+    search_fields = ['name']
+
+
+class FoodListView(ListView):
+    model = Food
+    template_name = 'food/food-list.html'
+    context_object_name = 'foods'
 
 
 class DailyDashboardView(TemplateView):

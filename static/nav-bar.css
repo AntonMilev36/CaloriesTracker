@@ -14,7 +14,7 @@ header{
 	align-items: center;
 }
 
-header button {
+.nav-box button {
 	all: unset; /* Resets all default button styles */
 	font-size: 1em;
 	color: #FFF6FB;
@@ -24,7 +24,7 @@ header button {
 	font-family: inherit;
 }
 
-img {
+.nav-box img {
 	border: solid 1px;
 	padding: 1%;
 	border-radius: 50px;
@@ -32,7 +32,7 @@ img {
 	max-width: 80px;
 }
 
-ul {
+.nav-box ul {
 	display: flex;
 	/*margin: 0 0 20% 5%;*/
 	justify-content: space-around;
@@ -41,14 +41,14 @@ ul {
 	align-items: center;
 }
 
-li {
+.nav-box li {
 	font-size: 1.5em;
 	display: flex;
 	width: 100%;
 	justify-content: center;
 }
 
-a {
+.nav-box a {
 	color: #FFF6FB;
 	text-decoration: none;
 	padding: 5%;

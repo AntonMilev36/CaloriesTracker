@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, LogoutView
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView
@@ -26,6 +26,12 @@ class AppUserCreateView(CreateView):
 
 class AppLoginView(LoginView):
     form_class = AppLoginForm
+
+    def get_success_url(self):
+        user = self.request.user
+        return reverse_lazy(
+            'dashboard', kwargs={'pk': user.pk}
+        )
 
 
 class ProfileEditView(LoginRequiredMixin, UpdateView):

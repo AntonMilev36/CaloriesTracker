@@ -1,0 +1,76 @@
+{% extends 'base/nav-bar.html' %}
+{% load static %}
+
+{% block content %}
+	<link rel="stylesheet" type="text/css" href="{% static 'meal-food-info.css' %}">
+<body>
+{#	<h1>Breakfast</h1>#}
+    <div class="search-box">
+        <input type="text" id="search-input" placeholder="Search for a food..." autocomplete="off">
+    </div>
+    <div id="results-container">
+        {% for food in foods %}
+            <div class="meal-box">
+                <div class="meal-food-box">
+                    <div class="image-name-box">
+                        <img src="{{ food.image }}" alt="some_random_food_without_image">
+                        <h2>{{ food.name }}</h2>
+                    </div>
+                    <div class="info-box">
+                        <h3>Macros per 100g</h3>
+                        <div class="grams-box">
+                            <p>{{ food.calories }} kcal</p>
+                            <p>{{ food.protein }} g. protein</p>
+                            <p>{{ food.carbs }} g. carbs</p>
+                            <p>{{ food.fats }} g. fats</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+
+    <script>
+  const searchInput = document.getElementById('search-input');
+  const resultsContainer = document.getElementById('results-container');
+
+  searchInput.addEventListener('input', async () => {
+    const query = searchInput.value;
+
+    const response = await fetch(`/food/api/foods/?search=${encodeURIComponent(query)}`);
+
+    const data = await response.json();
+
+    // Clear previous results
+    resultsContainer.innerHTML = '';
+
+    // Add new results
+    data.forEach(food => {
+      const foodElement = document.createElement('div');
+      foodElement.classList.add('meal-box');
+
+      foodElement.innerHTML = `
+        <div class="meal-food-box">
+          <div class="image-name-box">
+            <img src="${food.image}" alt="no-image">
+            <h2>${food.name}</h2>
+          </div>
+          <div class="info-box">
+            <h3>Macros per 100g</h3>
+            <div class="grams-box">
+              <p>${food.calories} kcal</p>
+              <p>${food.protein} g. protein</p>
+              <p>${food.carbs} g. carbs</p>
+              <p>${food.fats} g. fats</p>
+            </div>
+          </div>
+        </div>
+      `;
+
+      resultsContainer.appendChild(foodElement);
+    });
+  });
+</script>
+</body>
+{% endblock %}

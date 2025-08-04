@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from accounts.models import AppUser
+from accounts.models import AppUser, Profile
 
 
 # Register your models here.
@@ -41,3 +41,9 @@ class AppUserAdmin(UserAdmin):
         "groups",
         "user_permissions",
     )
+
+
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'first_name', 'last_name', 'age', 'gender')
+    search_fields = ('user__email', 'first_name', 'last_name')

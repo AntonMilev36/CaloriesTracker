@@ -1,0 +1,65 @@
+{% extends 'base/nav-bar.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'add-food-meal.css' %}">
+
+<form method="post">
+  {% csrf_token %}
+
+  <div class="food-box">
+    <img src="{{ food.image }}" alt="{{ food.name }}">
+    <div class="macros-box">
+      <label for="grams-input">Grams:</label>
+      <input type="number" name="grams" id="grams-input" value="{{ form.grams.value|default:100 }}" min="1" required>
+
+      <p>Calories: <span id="calories">{{ food.calories }}</span> kcal</p>
+      <p>Protein: <span id="protein">{{ food.protein }}</span> g</p>
+      <p>Carbs: <span id="carbs">{{ food.carbs }}</span> g</p>
+      <p>Fats: <span id="fats">{{ food.fats }}</span> g</p>
+    </div>
+  </div>
+
+  <div class="meal-info-box">
+    <label for="id_meal_type">Meal type:</label>
+    {{ form.meal_type }}
+
+    <label for="id_date">Date:</label>
+    {{ form.date }}
+  </div>
+
+  <button type="submit">Add to Meal</button>
+
+  {% if form.errors %}
+    <ul style="color:red;">
+      {% for field in form %}
+        {% for err in field.errors %}
+          <li>{{ field.label }}: {{ err }}</li>
+        {% endfor %}
+      {% endfor %}
+    </ul>
+  {% endif %}
+</form>
+
+<script>
+  const gramsInput = document.getElementById('grams-input');
+  const baseMacros = {
+    calories: {{ food.calories }},
+    protein: {{ food.protein }},
+    carbs: {{ food.carbs }},
+    fats: {{ food.fats }},
+  };
+
+  function updateMacros() {
+    const grams = Number(gramsInput.value) || 0;
+    const factor = grams / 100;
+
+    document.getElementById('calories').textContent = (baseMacros.calories * factor).toFixed(1);
+    document.getElementById('protein').textContent = (baseMacros.protein * factor).toFixed(1);
+    document.getElementById('carbs').textContent = (baseMacros.carbs * factor).toFixed(1);
+    document.getElementById('fats').textContent = (baseMacros.fats * factor).toFixed(1);
+  }
+
+  gramsInput.addEventListener('input', updateMacros);
+</script>
+{% endblock %}

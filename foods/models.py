@@ -60,10 +60,7 @@ class Meal(models.Model):
     )
 
     def get_current_meal(self):
-        return MealFood.objects.filter(
-            meal__meal_type=self.meal_type,
-            meal__date=self.date
-        )
+        return MealFood.objects.filter(meal=self)
 
     @property
     def meal_cal(self):
@@ -102,8 +99,8 @@ class MealFood(models.Model):
 
     grams_of_food = models.PositiveIntegerField()
 
-    class Meta:
-        unique_together = ('meal', 'food')
+    # class Meta:
+    #     unique_together = ('meal', 'food')
 
     def food_macros(self, macros_type):
         return (macros_type / 100) * self.grams_of_food

@@ -10,6 +10,7 @@
     </div>
     <div id="results-container">
         {% for food in foods %}
+            <a href="{% url 'add-food-to-meal' food.pk %}">
             <div class="meal-box">
                 <div class="meal-food-box">
                     <div class="image-name-box">
@@ -27,50 +28,74 @@
                     </div>
                 </div>
             </div>
+            </a>
         {% endfor %}
     </div>
 
-
     <script>
-  const searchInput = document.getElementById('search-input');
-  const resultsContainer = document.getElementById('results-container');
+        const searchInput = document.getElementById('search-input');
+        const resultsContainer = document.getElementById('results-container');
 
-  searchInput.addEventListener('input', async () => {
-    const query = searchInput.value;
+        async function fetchFoods(query) {
+          try {
+            const response = await fetch(`/food/api/foods/?search=${encodeURIComponent(query)}`);
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
 
-    const response = await fetch(`/food/api/foods/?search=${encodeURIComponent(query)}`);
+            resultsContainer.innerHTML = '';
 
-    const data = await response.json();
+            if (data.length === 0) {
+              resultsContainer.innerHTML = '<p>No foods found.</p>';
+              return;
+            }
 
-    // Clear previous results
-    resultsContainer.innerHTML = '';
+            data.forEach(food => {
+              const link = document.createElement('a');
+              link.href = `/food/${food.id}/add-to-meal/`;
+              link.style.textDecoration = 'none';
 
-    // Add new results
-    data.forEach(food => {
-      const foodElement = document.createElement('div');
-      foodElement.classList.add('meal-box');
+              const foodElement = document.createElement('div');
+              foodElement.classList.add('meal-box');
 
-      foodElement.innerHTML = `
-        <div class="meal-food-box">
-          <div class="image-name-box">
-            <img src="${food.image}" alt="no-image">
-            <h2>${food.name}</h2>
-          </div>
-          <div class="info-box">
-            <h3>Macros per 100g</h3>
-            <div class="grams-box">
-              <p>${food.calories} kcal</p>
-              <p>${food.protein} g. protein</p>
-              <p>${food.carbs} g. carbs</p>
-              <p>${food.fats} g. fats</p>
-            </div>
-          </div>
-        </div>
-      `;
+              foodElement.innerHTML = `
+                <div class="meal-food-box">
+                  <div class="image-name-box">
+                    <img src="${food.image || '/static/default-food.png'}" alt="food image" width="100">
+                    <h2>${food.name}</h2>
+                  </div>
+                  <div class="info-box">
+                    <h3>Macros per 100g</h3>
+                    <div class="grams-box">
+                      <p>${food.calories} kcal</p>
+                      <p>${food.protein} g. protein</p>
+                      <p>${food.carbs} g. carbs</p>
+                      <p>${food.fats} g. fats</p>
+                    </div>
+                  </div>
+                </div>
+              `;
 
-      resultsContainer.appendChild(foodElement);
-    });
-  });
-</script>
+              link.appendChild(foodElement);
+              resultsContainer.appendChild(link);
+            });
+          } catch (error) {
+            console.error('Error fetching food data:', error);
+            resultsContainer.innerHTML = '<p>Error loading data. Please try again.</p>';
+          }
+        }
+
+        // Initial load: show all foods
+        fetchFoods('');
+
+        // Update search results on input
+        searchInput.addEventListener('input', () => {
+          const query = searchInput.value.trim();
+          fetchFoods(query);
+        });
+    </script>
+
+
 </body>
 {% endblock %}

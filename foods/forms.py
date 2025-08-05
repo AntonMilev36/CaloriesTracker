@@ -4,7 +4,7 @@ from django import forms
 
 from django.utils.timezone import now
 from foods.choices import MealTypeChoices
-from foods.models import Food, Meal
+from foods.models import Food, Meal, Tag
 
 
 class FoodBaseForm(forms.ModelForm):
@@ -40,3 +40,12 @@ class AddFoodToMealForm(forms.Form):
     meal_type = forms.ChoiceField(choices=MealTypeChoices.choices)
     date = forms.DateField(initial=now().date)
 
+
+class BaseTagsForm(forms.ModelForm):
+    class Meta:
+        model = Tag
+        fields = '__all__'
+
+
+class TagsCreateForm(BaseTagsForm):
+    pass

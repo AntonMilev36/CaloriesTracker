@@ -10,8 +10,8 @@ from rest_framework.filters import SearchFilter
 from rest_framework.generics import ListAPIView
 
 from foods.choices import MealTypeChoices
-from foods.forms import FoodCreateForm, AddFoodToMealForm, FoodEditForm, FoodDeleteForm
-from foods.models import Food, Meal, MealFood
+from foods.forms import FoodCreateForm, AddFoodToMealForm, FoodEditForm, FoodDeleteForm, TagsCreateForm
+from foods.models import Food, Meal, MealFood, Tag
 from foods.serializers import FoodSearchSerializer
 
 
@@ -48,14 +48,11 @@ class FoodCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     form_class = FoodCreateForm
     template_name = 'food/add-food.html'
 
-    def get_success_url(self):
-        user = self.request.user
-        return reverse_lazy(
-            'dashboard', kwargs={'pk': user.pk}
-        )
-
     def test_func(self):
-        return self.request.user.is_staff
+        return self.request.user.is_staff or self.request.user.is_superuser
+
+    def get_success_url(self):
+        return reverse_lazy('dashboard', kwargs={'pk': self.request.user.pk})
 
     def handle_no_permission(self):
         return redirect('food-list')
@@ -82,17 +79,29 @@ class FoodListView(ListView):
         return context
 
 
-class FoodEditView(UpdateView):
+class FoodEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Food
     form_class = FoodEditForm
     template_name = 'food/edit-food.html'
     success_url = reverse_lazy('food-list')
 
+    def test_func(self):
+        return self.request.user.is_staff or self.request.user.is_superuser
 
-class FoodDeleteView(DeleteView):
+    def handle_no_permission(self):
+        return redirect('food-list')
+
+
+class FoodDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Food
     template_name = 'food/delete-food.html'
     success_url = reverse_lazy('food-list')
+
+    def test_func(self):
+        return self.request.user.is_staff or self.request.user.is_superuser
+
+    def handle_no_permission(self):
+        return redirect('food-list')
 
 
 class MealDetailView(LoginRequiredMixin, DetailView):
@@ -164,3 +173,13 @@ class AddFoodToMealView(LoginRequiredMixin, View):
             return redirect(reverse('dashboard', kwargs={'pk': request.user.pk}))
 
         return render(request, self.template_name, {'form': form, 'food': food})
+
+
+class CreateTagView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    model = Tag
+    form_class = TagsCreateForm
+    template_name = 'food/add-tag.html'
+    success_url = reverse_lazy('food-list')
+
+    def test_func(self):
+        return self.request.user.is_superuser

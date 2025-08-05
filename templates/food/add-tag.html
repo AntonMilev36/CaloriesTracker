@@ -1,0 +1,23 @@
+{% extends 'base/nav-bar.html' %}
+{% load static %}
+
+{% block content %}
+	<link rel="stylesheet" type="text/css" href="{% static 'register.css' %}">
+<body>
+	<div class="register-box">
+		<h1>Add new Tag</h1>
+		<div class="register-form">
+			<form method="post">
+				{% csrf_token %}
+                <div class="form-items">
+                    {{ form.name.label }}
+                    {{ form.name }}
+                    {{ form.name.errors }}
+                </div>
+				<button>Submit</button>
+			</form>
+		</div>
+        <a href="{% url 'create-food' %}">Add new tag</a>
+	</div>
+</body>
+{% endblock %}

@@ -17,6 +17,9 @@
                 {% if request.user.is_staff %}
                     <li><a href="{% url 'create-food' %}">Create Food</a></li>
                 {% endif %}
+                {% if request.user.is_superuser %}
+                    <li><a href="{% url 'create-tag' %}">Add Tag</a></li>
+                {% endif %}
                 <li>
                     <form method="post" action="{% url 'logout' %}">
                         {% csrf_token %}

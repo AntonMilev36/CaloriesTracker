@@ -28,7 +28,7 @@ section {
 .info-box h1 {
 	color: #FF0592;
 	font-size: 2em;
-	margin: 3% 0 1% 0;
+	margin: 1% 0;
 }
 
 .date-box p {
@@ -57,7 +57,7 @@ section {
 }
 
 .macros-box {
-	width: 40%;
+	width: 60%;
 	display: flex;
 	justify-content: space-between;
 }

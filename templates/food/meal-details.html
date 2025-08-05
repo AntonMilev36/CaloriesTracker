@@ -1,10 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
+{% extends 'base/nav-bar.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'meal-food-information.css' %}">
+
 <body>
-    <h1>Test</h1>
+    <h1>{{ meal_label }}</h1>
+
+    {% if meal_foods %}
+        {% for meal_food in meal_foods %}
+        <div class="meal-box">
+            <div class="meal-food-box">
+                <div class="image-name-box">
+                    <img src="{{ meal_food.food.image|default:'/static/default-food.png' }}" alt="{{ meal_food.food.name }}">
+                    <h2>{{ meal_food.food.name }}</h2>
+                </div>
+                <div class="info-box">
+                    <h3>Consumed</h3>
+                    <div class="grams-box">
+                        <p>{{ meal_food.grams_of_food }} grams</p>
+                        <p>{{ meal_food.food_cal|floatformat:0 }} kcal</p>
+                    </div>
+                    <div class="macros-box">
+                        <p>{{ meal_food.food_protein|floatformat:1 }} g protein</p>
+                        <p>{{ meal_food.food_carbs|floatformat:1 }} g carbs</p>
+                        <p>{{ meal_food.food_fats|floatformat:1 }} g fats</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>No foods have been added to this meal yet.</p>
+    {% endif %}
 </body>
-</html>
+{% endblock %}

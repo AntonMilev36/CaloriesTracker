@@ -10,25 +10,26 @@
             <p>Calories for the day: {{ daily_cals|default:0 }}</p>
             <p>{{ date|date:'d M Y' }}</p>
         </div>
-        {% for meal_label, meal in meals.items %}
-            <div class="meal-box">
-                <div class="info-box">
-                    <h1>{{ meal_label }}</h1>
-                </div>
-                <div class="main-box">
-                    <div class="button-box">
-                        <a href="{% url 'food-list' %}">Add food</a>
-                        <a href="{% url 'meal-detail' meal_type=meal_label date=date|date:'Y-m-d' %}">Meal details</a>
-                    </div>
-                    <div class="macros-box">
-                        <p>kcal: {{ meal.meal_cal|default:0 }}</p>
-                        <p>protein: {{ meal.meal_protein|default:0 }}g</p>
-                        <p>carbs: {{ meal.meal_carbs|default:0 }}g</p>
-                        <p>fats: {{ meal.meal_fats|default:0 }}g</p>
-                    </div>
-                </div>
+        {% for meal_data in meals %}
+    <div class="meal-box">
+        <div class="info-box">
+            <h1>{{ meal_data.meal_label }}</h1>
+        </div>
+        <div class="main-box">
+            <div class="button-box">
+                <a href="{% url 'food-list' %}">Add food</a>
+                <a href="{% url 'meal-detail' meal_type=meal_data.meal_type date=date|date:'Y-m-d' %}">Meal details</a>
             </div>
-        {% endfor %}
+            <div class="macros-box">
+                <p>kcal: {{ meal_data.meal.meal_cal|default:0 }}</p>
+                <p>protein: {{ meal_data.meal.meal_protein|default:0 }}g</p>
+                <p>carbs: {{ meal_data.meal.meal_carbs|default:0 }}g</p>
+                <p>fats: {{ meal_data.meal.meal_fats|default:0 }}g</p>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+
     </section>
 </body>
 {% endblock %}

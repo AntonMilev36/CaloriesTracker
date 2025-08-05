@@ -4,14 +4,19 @@
 {% block content %}
 	<link rel="stylesheet" type="text/css" href="{% static 'meal-food-info.css' %}">
 <body>
-{#	<h1>Breakfast</h1>#}
-    <div class="search-box">
-        <input type="text" id="search-input" placeholder="Search for a food..." autocomplete="off">
-    </div>
+    {% if user.is_authenticated %}
+        <div class="search-box">
+            <input type="text" id="search-input" placeholder="Search for a food..." autocomplete="off">
+        </div>
+    {% else %}
+        <h1>Foods information</h1>
+    {% endif %}
     <div id="results-container">
         {% for food in foods %}
-            <a href="{% url 'add-food-to-meal' food.pk %}">
-            <div class="meal-box">
+            {% if user.is_authenticated %}
+                <a href="{% url 'add-food-to-meal' food.pk %}">
+            {% endif %}
+            <div class="{% if user.is_authenticated %}meal-box{% else %}meal-box-2{% endif %}">
                 <div class="meal-food-box">
                     <div class="image-name-box">
                         <img src="{{ food.image }}" alt="some_random_food_without_image">
@@ -28,73 +33,95 @@
                     </div>
                 </div>
             </div>
-            </a>
+            {% if user.is_authenticated %}
+                </a>
+            {% endif %}
         {% endfor %}
+        <div class="pagination">
+            {% if foods.has_previous %}
+                <a href="?page={{ foods.previous_page_number }}">&laquo; Prev</a>
+            {% endif %}
+
+            {% for num in foods.paginator.page_range %}
+                {% if foods.number == num %}
+                    <span class="current">{{ num }}</span>
+                {% elif num > foods.number|add:'-3' and num < foods.number|add:'3' %}
+                    <a href="?page={{ num }}">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if foods.has_next %}
+                <a href="?page={{ foods.next_page_number }}">Next &raquo;</a>
+            {% endif %}
+</div>
+
     </div>
 
-    <script>
-        const searchInput = document.getElementById('search-input');
-        const resultsContainer = document.getElementById('results-container');
+    {% if user.is_authenticated %}
+        <script>
+            const searchInput = document.getElementById('search-input');
+            const resultsContainer = document.getElementById('results-container');
 
-        async function fetchFoods(query) {
-          try {
-            const response = await fetch(`/food/api/foods/?search=${encodeURIComponent(query)}`);
-            if (!response.ok) {
-              throw new Error('Network response was not ok');
-            }
-            const data = await response.json();
+            async function fetchFoods(query) {
+              try {
+                const response = await fetch(`/food/api/foods/?search=${encodeURIComponent(query)}`);
+                if (!response.ok) {
+                  throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
 
-            resultsContainer.innerHTML = '';
+                resultsContainer.innerHTML = '';
 
-            if (data.length === 0) {
-              resultsContainer.innerHTML = '<p>No foods found.</p>';
-              return;
-            }
+                if (data.length === 0) {
+                  resultsContainer.innerHTML = '<p>No foods found.</p>';
+                  return;
+                }
 
-            data.forEach(food => {
-              const link = document.createElement('a');
-              link.href = `/food/${food.id}/add-to-meal/`;
-              link.style.textDecoration = 'none';
+                data.forEach(food => {
+                  const link = document.createElement('a');
+                  link.href = `/food/${food.id}/add-to-meal/`;
+                  link.style.textDecoration = 'none';
 
-              const foodElement = document.createElement('div');
-              foodElement.classList.add('meal-box');
+                  const foodElement = document.createElement('div');
+                  foodElement.classList.add('meal-box');
 
-              foodElement.innerHTML = `
-                <div class="meal-food-box">
-                  <div class="image-name-box">
-                    <img src="${food.image || '/static/default-food.png'}" alt="food image" width="100">
-                    <h2>${food.name}</h2>
-                  </div>
-                  <div class="info-box">
-                    <h3>Macros per 100g</h3>
-                    <div class="grams-box">
-                      <p>${food.calories} kcal</p>
-                      <p>${food.protein} g. protein</p>
-                      <p>${food.carbs} g. carbs</p>
-                      <p>${food.fats} g. fats</p>
+                  foodElement.innerHTML = `
+                    <div class="meal-food-box">
+                      <div class="image-name-box">
+                        <img src="${food.image || '/static/default-food.png'}" alt="food image" width="100">
+                        <h2>${food.name}</h2>
+                      </div>
+                      <div class="info-box">
+                        <h3>Macros per 100g</h3>
+                        <div class="grams-box">
+                          <p>${food.calories} kcal</p>
+                          <p>${food.protein} g. protein</p>
+                          <p>${food.carbs} g. carbs</p>
+                          <p>${food.fats} g. fats</p>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              `;
+                  `;
 
-              link.appendChild(foodElement);
-              resultsContainer.appendChild(link);
+                  link.appendChild(foodElement);
+                  resultsContainer.appendChild(link);
+                });
+              } catch (error) {
+                console.error('Error fetching food data:', error);
+                resultsContainer.innerHTML = '<p>Error loading data. Please try again.</p>';
+              }
+            }
+
+            // Initial load: show all foods
+            fetchFoods('');
+
+            // Update search results on input
+            searchInput.addEventListener('input', () => {
+              const query = searchInput.value.trim();
+              fetchFoods(query);
             });
-          } catch (error) {
-            console.error('Error fetching food data:', error);
-            resultsContainer.innerHTML = '<p>Error loading data. Please try again.</p>';
-          }
-        }
-
-        // Initial load: show all foods
-        fetchFoods('');
-
-        // Update search results on input
-        searchInput.addEventListener('input', () => {
-          const query = searchInput.value.trim();
-          fetchFoods(query);
-        });
-    </script>
+        </script>
+    {% endif %}
 
 
 </body>

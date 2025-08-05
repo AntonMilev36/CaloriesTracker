@@ -6,7 +6,7 @@ body {
 
 header{
 	display: flex;
-	justify-content: space-between;
+	justify-content: space-around;
 	/*background-color: #FF0592;*/
 	background-color: #FC5BB6;
 	padding: 1%;
@@ -29,7 +29,7 @@ header{
 	padding: 1%;
 	border-radius: 50px;
 	background-color: #FFF6FB;
-	max-width: 55px;
+	max-width: 50px;
 }
 
 .nav-box ul {
@@ -60,6 +60,7 @@ footer {
 	display: flex;
 	justify-content: space-evenly;
 	background-color: #FC5BB6;
+	margin-top: 2%;
 }
 
 footer p {

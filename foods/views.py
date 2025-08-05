@@ -1,6 +1,7 @@
 import datetime
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import Http404
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.timezone import localdate
@@ -21,17 +22,20 @@ class DailyDashboardView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         date = localdate()
 
-        meals = {}
+        meals = []
         for meal_value, meal_label in MealTypeChoices.choices:
-            # Fetch meal for user, date and meal type
             meal_instance = Meal.objects.filter(
                 user=self.request.user,
                 meal_type=meal_value,
                 date=date
             ).first()
-            meals[meal_label] = meal_instance
+            meals.append({
+                'meal_label': meal_label,
+                'meal_type': meal_value,
+                'meal': meal_instance,
+            })
 
-        daily_cals = sum(meal.meal_cal for meal in meals.values() if meal)
+        daily_cals = sum(m['meal'].meal_cal for m in meals if m['meal'])
 
         context['date'] = date
         context['meals'] = meals
@@ -58,11 +62,11 @@ class FoodsListAPIView(LoginRequiredMixin, ListAPIView):
     search_fields = ['name']
 
 
-class FoodListView(LoginRequiredMixin, ListView):
+class FoodListView(ListView):
     model = Food
     template_name = 'food/food-list.html'
     context_object_name = 'foods'
-
+    # paginate_by = 2
 
 
 class MealDetailView(LoginRequiredMixin, DetailView):
@@ -76,8 +80,15 @@ class MealDetailView(LoginRequiredMixin, DetailView):
         user = self.request.user
 
         valid_meal_types = [choice[0] for choice in MealTypeChoices.choices]
+        if meal_type not in valid_meal_types:
+            raise Http404("Invalid meal type")
 
-        return get_object_or_404(Meal, user=user, meal_type=meal_type, date=date)
+        meal, created = Meal.objects.get_or_create(
+            user=user,
+            meal_type=meal_type,
+            date=date,
+        )
+        return meal
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

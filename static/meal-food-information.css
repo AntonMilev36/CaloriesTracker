@@ -16,13 +16,6 @@ h1 {
 	display: flex;
 	flex-direction: column;
 	border-bottom: solid 2px #FF0592;
-	width: 100%;
-}
-
-.meal-box-2 {
-	display: flex;
-	flex-direction: column;
-	border-bottom: solid 2px #FF0592;
 	width: 60%;
 }
 
@@ -53,7 +46,7 @@ h1 {
 .info-box {
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
+	justify-content: space-around;
 	width: 50%;
 	align-items: center;
 }
@@ -63,7 +56,7 @@ h1 {
 	margin: 0;
 }
 
-img {
+.meal-box img {
 	width: 100%;
 	height: auto;
 	max-width: 250px;
@@ -89,14 +82,6 @@ img {
 	border-radius: 5px;
 }
 
-.meal-box-2 p {
-	border: solid 1px #FF0592;
-	background-color: #FC5BB6;
-	color: #FFF6FB;
-	padding: 1% 2%;
-	border-radius: 5px;
-}
-
 .info-box h3 {
 	text-shadow: 1px 1px 2px #FF0592,
   	0 0 3em #FF0592,
@@ -107,63 +92,4 @@ img {
   	border: solid 1px #FFBEE3;
   	border-radius: 10px;
 	font-size: 1.3em;
-}
-
-#results-container {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	width: 100%;
-}
-
-.search-box {
-	width: 60%;
-	display: flex;
-	justify-content: left;
-}
-
-.search-box input {
-	padding: 1%;
-	border-color: #FF0592;
-	border-radius: 5px;
-	margin-top: 5%;
-}
-
-#results-container a {
-	text-decoration: none;
-	display: flex;
-	justify-content: center;
-	width: 60%;
-}
-
-.pagination {
-    margin: 30px 0;
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.pagination a,
-.pagination span {
-    border: 1px solid #FF0592;
-    background-color: #FC5BB6;
-    color: #FFF6FB;
-    padding: 8px 14px;
-    border-radius: 5px;
-    text-decoration: none;
-    font-size: 1rem;
-    transition: all 0.2s ease-in-out;
-}
-
-.pagination a:hover {
-    background-color: #FF0592;
-    color: white;
-}
-
-.pagination .current {
-    background-color: #FF0592;
-    color: white;
-    font-weight: bold;
-    pointer-events: none;
 }

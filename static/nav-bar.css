@@ -25,11 +25,11 @@ header{
 }
 
 .nav-box img {
-	border: solid 1px;
+	border: solid 1px #FF0592;
 	padding: 1%;
 	border-radius: 50px;
 	background-color: #FFF6FB;
-	max-width: 80px;
+	max-width: 55px;
 }
 
 .nav-box ul {

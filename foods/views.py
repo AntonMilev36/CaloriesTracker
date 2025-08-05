@@ -1,9 +1,10 @@
 import datetime
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.timezone import localdate
-from django.views.generic import CreateView, TemplateView, ListView, View
+from django.views.generic import CreateView, TemplateView, ListView, View, DetailView
 from rest_framework.filters import SearchFilter
 from rest_framework.generics import ListAPIView
 
@@ -13,33 +14,7 @@ from foods.models import Food, Meal, MealFood
 from foods.serializers import FoodSearchSerializer
 
 
-# Create your views here.
-class FoodCreateView(CreateView):
-    model = Food
-    form_class = FoodCreateForm
-    template_name = 'food/add-food.html'
-
-    def get_success_url(self):
-        user = self.request.user
-        return reverse_lazy(
-            'dashboard', kwargs={'pk': user.pk}
-        )
-
-
-class FoodsListAPIView(ListAPIView):
-    queryset = Food.objects.all()
-    serializer_class = FoodSearchSerializer
-    filter_backends = [SearchFilter]
-    search_fields = ['name']
-
-
-class FoodListView(ListView):
-    model = Food
-    template_name = 'food/food-list.html'
-    context_object_name = 'foods'
-
-
-class DailyDashboardView(TemplateView):
+class DailyDashboardView(LoginRequiredMixin, TemplateView):
     template_name = 'food/daily-dashboard.html'
 
     def get_context_data(self, **kwargs):
@@ -64,8 +39,56 @@ class DailyDashboardView(TemplateView):
         return context
 
 
+class FoodCreateView(LoginRequiredMixin, CreateView):
+    model = Food
+    form_class = FoodCreateForm
+    template_name = 'food/add-food.html'
 
-class AddFoodToMealView(View):
+    def get_success_url(self):
+        user = self.request.user
+        return reverse_lazy(
+            'dashboard', kwargs={'pk': user.pk}
+        )
+
+
+class FoodsListAPIView(LoginRequiredMixin, ListAPIView):
+    queryset = Food.objects.all()
+    serializer_class = FoodSearchSerializer
+    filter_backends = [SearchFilter]
+    search_fields = ['name']
+
+
+class FoodListView(LoginRequiredMixin, ListView):
+    model = Food
+    template_name = 'food/food-list.html'
+    context_object_name = 'foods'
+
+
+
+class MealDetailView(LoginRequiredMixin, DetailView):
+    model = Meal
+    template_name = 'food/meal-details.html'
+    context_object_name = 'meal'
+
+    def get_object(self, queryset=None):
+        meal_type = self.kwargs['meal_type']
+        date = self.kwargs['date']
+        user = self.request.user
+
+        valid_meal_types = [choice[0] for choice in MealTypeChoices.choices]
+
+        return get_object_or_404(Meal, user=user, meal_type=meal_type, date=date)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        meal = context['meal']
+        context['meal_foods'] = meal.get_current_meal().select_related('food')
+        context['meal_label'] = dict(MealTypeChoices.choices).get(meal.meal_type, meal.meal_type)
+        context['date'] = meal.date
+        return context
+
+
+class AddFoodToMealView(LoginRequiredMixin, View):
     form_class = AddFoodToMealForm
     template_name = 'food/add-food-meal.html'
 

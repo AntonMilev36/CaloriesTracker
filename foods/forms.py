@@ -4,7 +4,7 @@ from django import forms
 
 from django.utils.timezone import now
 from foods.choices import MealTypeChoices
-from foods.models import Food
+from foods.models import Food, Meal
 
 
 class FoodBaseForm(forms.ModelForm):

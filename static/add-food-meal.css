@@ -1,9 +1,16 @@
 .food-box {
 	display: flex;
-	width: 60%;
+	width: 100%;
 	justify-content: space-around;
-	border: solid 2px black;
 }
+
+hr {
+	width: 60%;
+	height: 2px;
+	background-color: #FF0592;
+	border: none;
+}
+
 
 .macros-box {
 	display: flex;
@@ -16,4 +23,11 @@
 	width: 100%;
 	height: auto;
 	max-width: 250px;
+}
+
+form {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 60%;
 }

@@ -14,7 +14,25 @@ class FoodBaseForm(forms.ModelForm):
 
 
 class FoodCreateForm(FoodBaseForm):
-    pass
+    class Meta(FoodBaseForm.Meta):
+        widgets = {
+            'tags': forms.CheckboxSelectMultiple(),
+        }
+
+
+class FoodEditForm(FoodBaseForm):
+    class Meta(FoodBaseForm.Meta):
+        exclude = ['id']
+
+
+class FoodDeleteForm(FoodBaseForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for name, field in self.fields.items():
+            if name == 'image':
+                continue  # We'll handle image separately in the template
+            field.widget.attrs['readonly'] = True
 
 
 class AddFoodToMealForm(forms.Form):

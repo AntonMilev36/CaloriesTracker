@@ -1,7 +1,7 @@
 from django.urls import path, include
 
 from foods.views import FoodCreateView, DailyDashboardView, FoodListView, FoodsListAPIView, AddFoodToMealView, \
-    MealDetailView
+    MealDetailView, FoodEditView, FoodDeleteView
 
 urlpatterns = [
     path('add/', FoodCreateView.as_view(), name='create-food'),
@@ -11,6 +11,8 @@ urlpatterns = [
 
     path('<int:pk>/', include([
         path('dashboard/', DailyDashboardView.as_view(), name='dashboard'),
-        path('add-to-meal/', AddFoodToMealView.as_view(), name='add-food-to-meal')
+        path('add-to-meal/', AddFoodToMealView.as_view(), name='add-food-to-meal'),
+        path('edit/', FoodEditView.as_view(), name='edit-food'),
+        path('delete/', FoodDeleteView.as_view(), name='delete-food')
     ]))
 ]

@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.core.validators import MinLengthValidator
+from django.core.validators import MinLengthValidator, MinValueValidator
 from django.db import models
 from django.utils.timezone import now
 
@@ -8,6 +8,16 @@ from foods.choices import MealTypeChoices
 
 # Create your models here.
 UserModel = get_user_model()
+
+
+class Tag(models.Model):
+    name = models.CharField(
+        max_length=30,
+        unique=True
+    )
+
+    def __str__(self):
+        return self.name
 
 
 class Food(models.Model):
@@ -25,13 +35,34 @@ class Food(models.Model):
     )
 
     # All macros are per 100 grams
-    calories = models.PositiveIntegerField()
+    calories = models.FloatField(
+        validators=[
+            MinValueValidator(1)
+        ]
+    )
 
-    protein = models.PositiveIntegerField()
+    protein = models.FloatField(
+        validators=[
+            MinValueValidator(1)
+        ]
+    )
 
-    carbs = models.PositiveIntegerField()
+    carbs = models.FloatField(
+        validators=[
+            MinValueValidator(1)
+        ]
+    )
 
-    fats = models.PositiveIntegerField()
+    fats = models.FloatField(
+        validators=[
+            MinValueValidator(1)
+        ]
+    )
+
+    tags = models.ManyToManyField(
+        Tag,
+        blank=True
+    )
 
     def __str__(self):
         return self.name

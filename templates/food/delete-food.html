@@ -1,0 +1,18 @@
+{% extends 'base/nav-bar.html' %}
+{% load static %}
+
+{% block content %}
+	<link rel="stylesheet" type="text/css" href="{% static 'register.css' %}">
+<body>
+	<div class="register-box">
+		<h1>Delete Food</h1>
+		<div class="register-form">
+			<form method="post">
+				{% csrf_token %}
+                <p>Are you sure that you want to delete this food?</p>
+				<button>Delete</button>
+			</form>
+		</div>
+	</div>
+</body>
+{% endblock %}

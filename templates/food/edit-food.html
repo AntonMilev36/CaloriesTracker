@@ -5,7 +5,7 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'register.css' %}">
 <body>
 	<div class="register-box">
-		<h1>Add new Food</h1>
+		<h1>Edit Food</h1>
 		<div class="register-form">
 			<form method="post">
 				{% csrf_token %}
@@ -38,11 +38,6 @@
                     {{ form.image.label }}
                     {{ form.image }}
                     {{ form.image.errors }}
-                </div>
-                <div class="form-items">
-                    {{ form.tags.label }}
-                    {{ form.tags }}
-                    {{ form.tags.errors }}
                 </div>
 				<button>Submit</button>
 			</form>

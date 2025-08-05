@@ -1,16 +1,16 @@
 import datetime
 
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import Http404
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.timezone import localdate
-from django.views.generic import CreateView, TemplateView, ListView, View, DetailView
+from django.views.generic import CreateView, TemplateView, ListView, View, DetailView, UpdateView, DeleteView
 from rest_framework.filters import SearchFilter
 from rest_framework.generics import ListAPIView
 
 from foods.choices import MealTypeChoices
-from foods.forms import FoodCreateForm, AddFoodToMealForm
+from foods.forms import FoodCreateForm, AddFoodToMealForm, FoodEditForm, FoodDeleteForm
 from foods.models import Food, Meal, MealFood
 from foods.serializers import FoodSearchSerializer
 
@@ -43,7 +43,7 @@ class DailyDashboardView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class FoodCreateView(LoginRequiredMixin, CreateView):
+class FoodCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Food
     form_class = FoodCreateForm
     template_name = 'food/add-food.html'
@@ -53,6 +53,12 @@ class FoodCreateView(LoginRequiredMixin, CreateView):
         return reverse_lazy(
             'dashboard', kwargs={'pk': user.pk}
         )
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def handle_no_permission(self):
+        return redirect('food-list')
 
 
 class FoodsListAPIView(LoginRequiredMixin, ListAPIView):
@@ -67,6 +73,26 @@ class FoodListView(ListView):
     template_name = 'food/food-list.html'
     context_object_name = 'foods'
     # paginate_by = 2
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        meal_type = self.kwargs.get('meal_type')
+        context['meal_type'] = meal_type
+
+        return context
+
+
+class FoodEditView(UpdateView):
+    model = Food
+    form_class = FoodEditForm
+    template_name = 'food/edit-food.html'
+    success_url = reverse_lazy('food-list')
+
+
+class FoodDeleteView(DeleteView):
+    model = Food
+    template_name = 'food/delete-food.html'
+    success_url = reverse_lazy('food-list')
 
 
 class MealDetailView(LoginRequiredMixin, DetailView):

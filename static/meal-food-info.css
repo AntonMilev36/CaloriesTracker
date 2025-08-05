@@ -167,3 +167,28 @@ img {
     font-weight: bold;
     pointer-events: none;
 }
+
+.icon-links {
+	display: flex;
+	margin-left: 80%;
+}
+
+.icon-links img {
+	max-width: 40px;
+}
+
+.tags-list {
+	background-color: #FC5BB6;
+	border-radius: 5px;
+	list-style-type: none;
+	display: flex;
+	flex-direction: column;
+	align-items: start;
+	padding: 0;
+}
+
+.tags-list li {
+	width: 100%;
+	color: #FFF6FB;
+}
+

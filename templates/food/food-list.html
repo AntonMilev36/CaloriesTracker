@@ -18,14 +18,14 @@
             {% if user.is_authenticated %}
                 <a href="{% url 'add-food-to-meal' food.pk %}">
             {% endif %}
-            <div class="{% if user.is_authenticated %}meal-box{% else %}meal-box-2{% endif %}">
+            <div class="{% if user.is_authenticated and user.is_staff and user.is_superuser %}meal-box{% else %}meal-box-2{% endif %}">
                 <div class="meal-food-box">
                     <div class="image-name-box">
                         <img src="{{ food.image }}" alt="some_random_food_without_image">
                         <h2>{{ food.name }}</h2>
                     </div>
                     <div class="info-box">
-                        {% if user.is_authenticated %}
+                        {% if user.is_authenticated and user.is_staff and user.is_superuser %}
                         <div class="icon-links">
                             <a href="{% url 'edit-food' pk=food.pk %}"><img src="{% static 'images/edit.png' %}" alt="edit"></a>
                             <a href="{% url 'delete-food' pk=food.pk %}"><img src="{% static 'images/trash.png' %}" alt="delete"></a>
@@ -39,13 +39,13 @@
                             <p>{{ food.fats }} g. fats</p>
                         </div>
                         <div class="tags-box">
-                            {% if food.tags.all %}
-                                <ul class="tags-list">
-                                    {% for tag in food.tags.all %}
-                                        <li>{{ tag.name }}</li>
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
+                                {% if food.tags.count > 0 %}
+                                    <ul class="tags-list">
+                                        {% for tag in food.tags.all %}
+                                            <li>{{ tag.name }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
                         </div>
                     </div>
                 </div>
@@ -58,88 +58,85 @@
 
     {% if user.is_authenticated %}
         <script>
-            const searchInput = document.getElementById('search-input');
-            const resultsContainer = document.getElementById('results-container');
+    const searchInput = document.getElementById('search-input');
+    const resultsContainer = document.getElementById('results-container');
 
-            async function fetchFoods(query) {
-                try {
-                    const response = await fetch(`/food/api/foods/?search=${encodeURIComponent(query)}`);
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    const data = await response.json();
+    async function fetchFoods(query) {
+        try {
+            const response = await fetch(`/food/api/foods/?search=${encodeURIComponent(query)}`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
 
-                    resultsContainer.innerHTML = '';
+            resultsContainer.innerHTML = '';
 
-                    if (data.length === 0) {
-                        resultsContainer.innerHTML = '<p>No foods found.</p>';
-                        return;
-                    }
-
-                    data.forEach(food => {
-                        const link = document.createElement('a');
-                        link.href = `/food/${food.id}/add-to-meal/`;
-                        link.style.textDecoration = 'none';
-
-                        const foodElement = document.createElement('div');
-                        foodElement.classList.add('meal-box');
-
-                        // Build tags list HTML, only if tags exist and are not empty or undefined
-                        let tagsHtml = '';
-                        if (food.tags && Array.isArray(food.tags) && food.tags.length > 0) {
-                            tagsHtml = '<ul class="tags-list">';
-                            food.tags.forEach(tag => {
-                                if (tag) {  // avoid undefined/null tags
-                                    tagsHtml += `<li>${tag}</li>`;
-                                }
-                            });
-                            tagsHtml += '</ul>';
-                        } else {
-                            tagsHtml = '<p>No tags</p>';
-                        }
-
-                        foodElement.innerHTML = `
-                            <div class="meal-food-box">
-                                <div class="image-name-box">
-                                    <img src="${food.image || '/static/default-food.png'}" alt="food image">
-                                    <h2>${food.name}</h2>
-                                </div>
-                                <div class="info-box">
-                                    <div class="icon-links">
-                                        <a href="/food/${food.id}/edit/"><img src="/static/images/edit.png" alt="edit"></a>
-                                        <a href="/food/${food.id}/delete/"><img src="/static/images/trash.png" alt="delete"></a>
-                                    </div>
-                                    <h3>Macros per 100g</h3>
-                                    <div class="grams-box">
-                                        <p>${food.calories} kcal</p>
-                                        <p>${food.protein} g. protein</p>
-                                        <p>${food.carbs} g. carbs</p>
-                                        <p>${food.fats} g. fats</p>
-                                    </div>
-                                    <div class="tags-container">
-                                        ${tagsHtml}
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-
-                        link.appendChild(foodElement);
-                        resultsContainer.appendChild(link);
-                    });
-                } catch (error) {
-                    console.error('Error fetching food data:', error);
-                    resultsContainer.innerHTML = '<p>Error loading data. Please try again.</p>';
-                }
+            if (data.length === 0) {
+                resultsContainer.innerHTML = '<p>No foods found.</p>';
+                return;
             }
 
-            // Initial load
-            fetchFoods('');
+            data.forEach(food => {
+                const link = document.createElement('a');
+                link.href = `/food/${food.id}/add-to-meal/`;
+                link.style.textDecoration = 'none';
 
-            // Live search
-            searchInput.addEventListener('input', () => {
-                const query = searchInput.value.trim();
-                fetchFoods(query);
+                const foodElement = document.createElement('div');
+                foodElement.classList.add('meal-box');
+
+                let tagsHtml = '';
+                if (food.tags && Array.isArray(food.tags) && food.tags.length > 0) {
+                    tagsHtml = '<ul class="tags-list">';
+                    food.tags.forEach(tag => {
+                        if (tag) {
+                            tagsHtml += `<li>${tag}</li>`;
+                        }
+                    });
+                    tagsHtml += '</ul>';
+                }
+
+                foodElement.innerHTML = `
+                    <div class="meal-food-box">
+                        <div class="image-name-box">
+                            <img src="${food.image || '/static/default-food.png'}" alt="food image">
+                            <h2>${food.name}</h2>
+                        </div>
+                        <div class="info-box">
+                            ${food.can_edit ? `
+                            <div class="icon-links">
+                                <a href="/food/${food.id}/edit/"><img src="/static/images/edit.png" alt="edit"></a>
+                                <a href="/food/${food.id}/delete/"><img src="/static/images/trash.png" alt="delete"></a>
+                            </div>` : ''}
+                            <h3>Macros per 100g</h3>
+                            <div class="grams-box">
+                                <p>${food.calories} kcal</p>
+                                <p>${food.protein} g. protein</p>
+                                <p>${food.carbs} g. carbs</p>
+                                <p>${food.fats} g. fats</p>
+                            </div>
+                            <div class="tags-container">
+                                ${tagsHtml}
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                link.appendChild(foodElement);
+                resultsContainer.appendChild(link);
             });
+        } catch (error) {
+            console.error('Error fetching food data:', error);
+            resultsContainer.innerHTML = '<p>Error loading data. Please try again.</p>';
+        }
+    }
+
+    // Initial fetch with empty search to load all foods
+    fetchFoods('');
+
+    searchInput.addEventListener('input', () => {
+        const query = searchInput.value.trim();
+        fetchFoods(query);
+    });
 </script>
 
     {% endif %}

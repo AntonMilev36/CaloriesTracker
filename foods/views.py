@@ -1,6 +1,7 @@
 import datetime
 
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.db.models import ProtectedError
 from django.http import Http404
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import get_object_or_404, render, redirect
@@ -64,12 +65,17 @@ class FoodsListAPIView(LoginRequiredMixin, ListAPIView):
     filter_backends = [SearchFilter]
     search_fields = ['name']
 
+    def get_serializer_context(self):
+        return {'request': self.request}
+
 
 class FoodListView(ListView):
     model = Food
     template_name = 'food/food-list.html'
     context_object_name = 'foods'
-    # paginate_by = 2
+
+    def get_queryset(self):
+        return Food.objects.prefetch_related('tags').all()
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -102,6 +108,16 @@ class FoodDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def handle_no_permission(self):
         return redirect('food-list')
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        try:
+            return super().post(request, *args, **kwargs)
+        except ProtectedError:
+            return render(request, 'food/cannot-delete-food.html', {
+                'food': self.object,
+                'error': 'This food is used in a meal and cannot be deleted.'
+            })
 
 
 class MealDetailView(LoginRequiredMixin, DetailView):

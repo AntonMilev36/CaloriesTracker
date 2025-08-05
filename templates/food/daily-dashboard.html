@@ -21,10 +21,10 @@
                 <a href="{% url 'meal-detail' meal_type=meal_data.meal_type date=date|date:'Y-m-d' %}">Meal details</a>
             </div>
             <div class="macros-box">
-                <p>kcal: {{ meal_data.meal.meal_cal|default:0 }}</p>
-                <p>protein: {{ meal_data.meal.meal_protein|default:0 }}g</p>
-                <p>carbs: {{ meal_data.meal.meal_carbs|default:0 }}g</p>
-                <p>fats: {{ meal_data.meal.meal_fats|default:0 }}g</p>
+                <p>kcal: {{ meal_data.meal.meal_cal|default:0|floatformat:1 }}</p>
+                <p>protein: {{ meal_data.meal.meal_protein|default:0|floatformat:1 }}g</p>
+                <p>carbs: {{ meal_data.meal.meal_carbs|default:0|floatformat:1 }}g</p>
+                <p>fats: {{ meal_data.meal.meal_fats|default:0|floatformat:1 }}g</p>
             </div>
         </div>
     </div>

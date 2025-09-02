@@ -28,3 +28,15 @@ jobs:
     - name: Run Tests
       run: |
         python manage.py test
+
+  deploy:
+
+    needs: build_and_test
+    runs-on: ubuntu-latest
+    container: cloudfoundry/cf-cli:latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          cf login -a https://api.cf.eu12.hana.ondemand.com --sso
+          cf push

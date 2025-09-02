@@ -33,10 +33,15 @@ jobs:
 
     needs: build_and_test
     runs-on: ubuntu-latest
-    container: cloudfoundry/cf-cli:latest
 
     steps:
       - uses: actions/checkout@v4
-      - run: |
+      - name: "Downloading Cloud Foundry CLI"
+        run: |
+          wget -O cf-cli.tgz "https://packages.cloudfoundry.org/stable?release=linux64-binary&version=8.2.0&source=github"
+          tar -xvzf cf-cli.tgz
+          sudo mv cf /usr/local/bin
+      - name: Login to CF
+        run: |
           cf login -a https://api.cf.eu12.hana.ondemand.com --sso
           cf push

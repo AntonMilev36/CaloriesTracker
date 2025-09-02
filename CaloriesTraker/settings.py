@@ -9,6 +9,9 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
+import os
+import dj_database_url
+import json
 
 from pathlib import Path
 
@@ -27,7 +30,14 @@ SECRET_KEY = 'django-insecure-e)zld*1_dv!)^a(k7dqf%0ivv0+$3m+7108&m72jw1fp&qgnzz
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'django-app-kind-bandicoot-vl.cfapps.eu12.hana.ondemand.com',
+    'localhost'
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://django-app-kind-bandicoot-vl.cfapps.eu12.hana.ondemand.com'
+]
 
 
 # Application definition
@@ -80,16 +90,39 @@ WSGI_APPLICATION = 'CaloriesTraker.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "calories_tracking",
-        "USER": "postgres",
-        "PASSWORD": "Tonkata36",
-        "HOST": "127.0.0.1",
-        "PORT": "5433",
+vcap_services = os.getenv('VCAP_SERVICES')
+DATABASES = {}
+
+if vcap_services:
+    try:
+        services = json.loads(vcap_services)
+        db_url = None
+        for service_list in services.values():
+            for service in service_list:
+                if 'credentials' in service and 'uri' in service['credentials']:
+                    db_url = service['credentials']['uri']
+                    break
+            if db_url:
+                break
+        if db_url:
+            DATABASES['default'] = dj_database_url.parse(db_url)
+        else:
+            # No service bound → fallback to SQLite
+            DATABASES['default'] = {
+                "ENGINE": "django.db.backends.sqlite3",
+                "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+            }
+    except Exception:
+        DATABASES['default'] = {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+        }
+else:
+    # fallback to SQLite for initial deployment
+    DATABASES['default'] = {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
     }
-}
 
 
 # Password validation
@@ -127,6 +160,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
 # Default primary key field type

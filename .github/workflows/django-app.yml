@@ -29,22 +29,3 @@ jobs:
       run: |
         python manage.py test
 
-  deploy:
-
-    needs: build_and_test
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: "Downloading Cloud Foundry CLI"
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y unzip curl
-          curl -L "https://packages.cloudfoundry.org/stable?release=linux64-binary&version=8.2.0&source=github" -o cf-cli.tgz
-          tar -xvzf cf-cli.tgz
-          sudo mv cf /usr/local/bin/
-          cf --version
-      - name: Login to CF
-        run: |
-          cf login -a https://api.cf.eu12.hana.ondemand.com --sso
-          cf push

@@ -35,7 +35,7 @@ jobs:
         with:
           python-version: 3.12
       - name: Download build
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: django-build
           path: .
